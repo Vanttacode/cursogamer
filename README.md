@@ -106,10 +106,3 @@ Lead Developer: Nicolás Vera.
 
 
 ***
-
-### ¿Por qué este README es bueno para ti?
-
-1.  **Contexto:** Explica *qué* es Vantta Academy, no solo el código.
-2.  **Estructura:** Muestra el árbol de carpetas, lo cual es utilísimo cuando vuelvas a tocar el código en 6 meses y no recuerdes dónde estaba el admin.
-3.  **Admin:** Documenta que existe un panel secreto y cómo funciona.
-4.  **Profesionalismo:** Si un cliente o colaborador ve esto, sabe que trabajas ordenado.
