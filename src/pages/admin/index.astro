@@ -1,8 +1,13 @@
 ﻿---
-if (!Astro.cookies.has('admin_session')) return Astro.redirect('/admin/login');
+import Layout from '../../layouts/Layout.astro';
 import AdminLayout from '../../components/admin/AdminLayout';
+
+// Protección de ruta
+if (!Astro.cookies.has('admin_session')) {
+  return Astro.redirect('/admin/login');
+}
 ---
-<html lang='es'>
-<head><meta charset='utf-8' /><title>Vantta Admin</title><meta name='viewport' content='width=device-width' /></head>
-<body class='bg-zinc-950'><AdminLayout client:load /></body>
-</html>
+
+<Layout title="Dashboard - Vantta Admin">
+  <AdminLayout client:load />
+</Layout>
