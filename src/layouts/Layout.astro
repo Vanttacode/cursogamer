@@ -1,4 +1,5 @@
 ---
+import { Analytics } from '@vercel/analytics/react';
 import "../styles/global.css";
 
 interface Props {
@@ -32,25 +33,21 @@ const {
   </head>
 
   <body class="bg-jules-bg text-jules-primary antialiased selection:bg-jules-accent selection:text-white overflow-x-hidden min-h-screen relative">
-    <!-- Jules scene layers -->
     <div class="jules-scene"></div>
     <div class="jules-scene-glow"></div>
     <div class="jules-scene-grid"></div>
 
-    <!-- Pixel islands + corner island -->
     <div class="jules-scene-islands"></div>
     <div class="jules-scene-corner"></div>
 
-    <!-- Diagonal band -->
     <div class="jules-scene-diagonal"></div>
 
-    <!-- Vignette -->
     <div class="jules-scene-vignette"></div>
 
-    <!-- Scanlines -->
     <div class="scanline"></div>
 
     <slot />
+
+    <Analytics client:load />
   </body>
 </html>
-
