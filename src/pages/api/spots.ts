@@ -1,41 +1,82 @@
 import type { APIRoute } from "astro";
-import { supabaseServer } from "../../lib/supabaseServer";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
+// OJO: esta key debe existir SOLO en server (.env), jamás como PUBLIC_
+const serviceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !serviceKey) {
+  throw new Error("Faltan SUPABASE_URL (o PUBLIC_SUPABASE_URL) o SUPABASE_SERVICE_ROLE_KEY en .env");
+}
+
+const supabase = createClient(supabaseUrl, serviceKey, {
+  auth: { persistSession: false },
+});
+
+// ✅ Solo estos estados consumen cupo real (ajusta si quieres)
+const ACTIVE_STATUSES = ["CONFIRMED", "APPROVED", "PAID"] as const;
+
+async function getMetaInt(keys: string[], fallback: number) {
+  for (const key of keys) {
+    const { data, error } = await supabase
+      .from("meta")
+      .select("value")
+      .eq("key", key)
+      .maybeSingle();
+
+    if (!error && data?.value) {
+      const n = parseInt(String(data.value), 10);
+      if (Number.isFinite(n) && n >= 0) return n;
+    }
+  }
+  return fallback;
+}
 
 export const GET: APIRoute = async () => {
-  const { data: totalRow, error: e1 } = await supabaseServer
-    .from("meta")
-    .select("value")
-    .eq("key", "spots_total")
-    .maybeSingle();
+  try {
+    // ✅ soporta ambas keys para que no te rompa nada según cómo lo tengas en BD
+    const total = await getMetaInt(["spots_total", "course_spots_total"], 30);
 
-  const { data: seedRow, error: e2 } = await supabaseServer
-    .from("meta")
-    .select("value")
-    .eq("key", "spots_taken_seed")
-    .maybeSingle();
+    // ✅ Tomados = suma de children_count de reservas confirmadas (o activas)
+    // Importante: NO cuentes filas, porque 1 reserva puede ser 1/2/3 cupos.
+    const { data, error } = await supabase
+      .from("reservations")
+      .select("status, children_count");
 
-  if (e1 || e2) return json({ ok: false, error: "No se pudo leer meta." }, 500);
+    if (error) throw error;
 
-  const total = Number(totalRow?.value ?? 30);
-  const seed = Number(seedRow?.value ?? 5);
+    const taken = (data || []).reduce((acc, row: any) => {
+      const isActive = ACTIVE_STATUSES.includes(row.status);
+      const qty = Number(row.children_count) || 0;
+      return acc + (isActive ? qty : 0);
+    }, 0);
 
-  const { count, error: e3 } = await supabaseServer
-    .from("reservations")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "CONFIRMED");
+    const left = Math.max(0, total - taken);
+    const pct = total > 0 ? Math.min(100, Math.round((taken / total) * 100)) : 0;
 
-  if (e3) return json({ ok: false, error: "No se pudo contar reservas." }, 500);
-
-  const confirmed = Number(count ?? 0);
-  const taken = seed + confirmed;
-  const left = Math.max(0, total - taken);
-
-  return json({ ok: true, total, taken, left }, 200);
+    // ✅ Formato “ok:true” para calzar con tu SpotsResponse del widget
+    // + devolvemos "available" por compatibilidad con pantallas viejas
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        total,
+        taken,
+        left,
+        available: left,
+        pct,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
+      }
+    );
+  } catch (e: any) {
+    return new Response(
+      JSON.stringify({ ok: false, error: "spots_fetch_failed", detail: e?.message || String(e) }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 };
-
-function json(data: any, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}

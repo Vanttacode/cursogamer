@@ -1,0 +1,46 @@
+---
+import ReservationWidget from "../ReservationWidget";
+---
+
+<section
+  id="register"
+  class="border-t border-jules-border pt-16"
+  aria-labelledby="register-title"
+>
+  <header class="max-w-2xl mx-auto text-center space-y-4">
+    <h2 id="register-title" class="text-3xl sm:text-4xl font-bold text-white">
+      Asegura su cupo ahora: De Jugador a Creador
+    </h2>
+
+    <p class="text-jules-secondary text-base sm:text-lg leading-relaxed">
+      Estás a un paso de transformar su pasatiempo en una habilidad real. El proceso es simple: inscribe a tus hijos (o amigos), realiza la transferencia y listo. Recibirás la confirmación y los detalles para el gran día en tu correo.
+    </p>
+
+    <div class="flex flex-wrap justify-center gap-3 pt-2 text-sm">
+      <span class="inline-flex items-center gap-2 rounded-md border border-jules-border bg-black/25 px-3 py-2 text-white/80">
+        <span class="text-green-400">✓</span> ¡Ideal para venir con amigos!
+      </span>
+      <span class="inline-flex items-center gap-2 rounded-md border border-jules-border bg-black/25 px-3 py-2 text-white/80">
+        <span class="text-green-400">✓</span> Descuento especial hermanos
+      </span>
+      <span class="inline-flex items-center gap-2 rounded-md border border-jules-border bg-black/25 px-3 py-2 text-white/80">
+        <span class="text-green-400">✓</span> Soporte directo por WhatsApp
+      </span>
+    </div>
+  </header>
+
+  <div class="mt-10 flex justify-center">
+    <div class="w-full max-w-2xl">
+      <ReservationWidget client:visible />
+    </div>
+  </div>
+
+  <div class="mt-8 max-w-2xl mx-auto">
+    <div class="rounded-xl border border-jules-border bg-black/25 p-4">
+      <div class="text-[11px] font-mono text-jules-secondary">NOTA IMPORTANTE</div>
+      <p class="mt-1 text-sm text-white/80 leading-relaxed">
+        Solo habilitamos pocos cupos por sesión para garantizar que cada alumno reciba atención personalizada de Nicolás. Si el formulario te permite reservar, ¡aún quedan lugares disponibles!
+      </p>
+    </div>
+  </div>
+</section>

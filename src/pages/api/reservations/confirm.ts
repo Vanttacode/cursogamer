@@ -1,99 +1,113 @@
 import type { APIRoute } from "astro";
-import { supabaseServer } from "../../../lib/supabaseServer";
+import { supabaseAdmin } from "../../../lib/supabaseAdmin";
 
-const MAX_BYTES = 8 * 1024 * 1024; // 8MB (ajusta si quieres)
-const ALLOWED_MIME = new Set([
-  "application/pdf",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
+const ACTIVE_STATUSES = ["CONFIRMED", "APPROVED", "PAID"] as const;
+
+async function getMetaInt(keys: string[], fallback: number) {
+  for (const key of keys) {
+    const { data, error } = await supabaseAdmin
+      .from("meta")
+      .select("value")
+      .eq("key", key)
+      .maybeSingle();
+
+    if (!error && data?.value != null) {
+      const n = parseInt(String(data.value), 10);
+      if (Number.isFinite(n) && n >= 0) return n;
+    }
+  }
+  return fallback;
+}
+
+async function computeSpots() {
+  const total = await getMetaInt(["spots_total", "course_spots_total"], 30);
+
+  const { data, error } = await supabaseAdmin
+    .from("reservations")
+    .select("status, children_count");
+
+  if (error) throw error;
+
+  const taken = (data || []).reduce((acc, row: any) => {
+    const isActive = ACTIVE_STATUSES.includes(row.status);
+    const qty = Number(row.children_count) || 0;
+    return acc + (isActive ? qty : 0);
+  }, 0);
+
+  const left = Math.max(0, total - taken);
+  return { total, taken, left };
+}
 
 export const POST: APIRoute = async ({ request }) => {
-  const form = await request.formData().catch(() => null);
-  if (!form) return json({ ok: false, error: "Formulario inválido." }, 400);
+  try {
+    const form = await request.formData();
+    const reservationId = String(form.get("reservationId") ?? "").trim();
+    const receipt = form.get("receipt");
 
-  const reservationId = String(form.get("reservationId") ?? "").trim();
-  const receipt = form.get("receipt");
+    if (!reservationId) {
+      return new Response(JSON.stringify({ ok: false, error: "Falta reservationId." }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    if (!(receipt instanceof File)) {
+      return new Response(JSON.stringify({ ok: false, error: "Debes adjuntar un comprobante (foto o PDF)." }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
-  if (!reservationId) return json({ ok: false, error: "Falta reservationId." }, 400);
+    // Verifica reserva existe
+    const { data: rsv, error: rsvErr } = await supabaseAdmin
+      .from("reservations")
+      .select("id,status,children_count")
+      .eq("id", reservationId)
+      .maybeSingle();
 
-  // ✅ Regla clave: NO se confirma si no hay comprobante
-  if (!(receipt instanceof File)) {
-    return json({ ok: false, error: "Debes adjuntar un comprobante (foto o PDF)." }, 400);
-  }
+    if (rsvErr) throw rsvErr;
+    if (!rsv) {
+      return new Response(JSON.stringify({ ok: false, error: "Reserva no encontrada." }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
-  if (!ALLOWED_MIME.has(receipt.type)) {
-    return json({ ok: false, error: "Formato inválido. Usa JPG/PNG/WEBP o PDF." }, 400);
-  }
-  if (receipt.size > MAX_BYTES) {
-    return json({ ok: false, error: "Archivo demasiado grande (máx 8MB)." }, 400);
-  }
+    // Subir a Storage (bucket: receipts) — idempotente
+    const ext = (receipt.name.split(".").pop() || "bin").toLowerCase();
+    const safeExt = ext.replace(/[^a-z0-9]/g, "") || "bin";
+    const path = `${reservationId}/receipt.${safeExt}`;
 
-  // Buscar reserva
-  const { data: resv, error: e1 } = await supabaseServer
-    .from("reservations")
-    .select("id,status")
-    .eq("id", reservationId)
-    .maybeSingle();
+    const { error: upErr } = await supabaseAdmin.storage
+      .from("receipts")
+      .upload(path, receipt, {
+        contentType: receipt.type || "application/octet-stream",
+        upsert: true, // ✅ reintentos no fallan
+      });
 
-  if (e1) return json({ ok: false, error: "Error buscando reserva." }, 500);
-  if (!resv) return json({ ok: false, error: "Reserva no encontrada." }, 404);
+    if (upErr) throw upErr;
 
-  if (resv.status === "CONFIRMED") {
-    // ya confirmada
-    const spots = await fetch(new URL("/api/spots", request.url)).then((r) => r.json());
-    return json({ ok: true, spotsLeft: spots?.left ?? null }, 200);
-  }
+    // Confirmar (si ya estaba CONFIRMED, igual actualizamos receipt_path)
+    const { error: upRsvErr } = await supabaseAdmin
+      .from("reservations")
+      .update({
+        status: "CONFIRMED",
+        receipt_path: path,
+      })
+      .eq("id", reservationId);
 
-  // Re-check cupos antes de confirmar
-  const spots = await fetch(new URL("/api/spots", request.url)).then((r) => r.json());
-  if (!spots?.ok) return json({ ok: false, error: "No se pudo verificar cupos." }, 500);
-  if (spots.left <= 0) return json({ ok: false, error: "Cupos agotados." }, 409);
+    if (upRsvErr) throw upRsvErr;
 
-  // Subir a Storage
-  const ext = guessExt(receipt.type, receipt.name);
-  const path = `${reservationId}/${Date.now()}.${ext}`;
+    // ✅ Recalcular cupos y devolverlos
+    const { total, taken, left } = await computeSpots();
 
-  const arrayBuffer = await receipt.arrayBuffer();
-  const bytes = new Uint8Array(arrayBuffer);
-
-  const { error: eUp } = await supabaseServer.storage
-    .from("receipts")
-    .upload(path, bytes, {
-      contentType: receipt.type,
-      upsert: false,
+    return new Response(
+      JSON.stringify({ ok: true, spotsLeft: left, total, taken }),
+      { status: 200, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } }
+    );
+  } catch (e: any) {
+    return new Response(JSON.stringify({ ok: false, error: e?.message ?? "Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
     });
-
-  if (eUp) return json({ ok: false, error: "No se pudo subir el comprobante." }, 500);
-
-  // Marcar CONFIRMED (esto es lo que “consume” cupo al contar confirmadas)
-  const { error: e2 } = await supabaseServer
-    .from("reservations")
-    .update({ status: "CONFIRMED", receipt_path: path })
-    .eq("id", reservationId);
-
-  if (e2) return json({ ok: false, error: "No se pudo confirmar la reserva." }, 500);
-
-  const spots2 = await fetch(new URL("/api/spots", request.url)).then((r) => r.json());
-  return json({ ok: true, spotsLeft: spots2?.left ?? null }, 200);
+  }
 };
-
-function guessExt(mime: string, name: string) {
-  const lower = name.toLowerCase();
-  if (mime === "application/pdf") return "pdf";
-  if (mime === "image/png") return "png";
-  if (mime === "image/webp") return "webp";
-  if (mime === "image/jpeg") return "jpg";
-  // fallback por nombre
-  const m = lower.match(/\.(pdf|png|webp|jpg|jpeg)$/);
-  if (m?.[1]) return m[1] === "jpeg" ? "jpg" : m[1];
-  return "bin";
-}
-
-function json(data: any, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}

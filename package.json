@@ -12,11 +12,17 @@
     "@astrojs/react": "^4.4.2",
     "@libsql/client": "^0.17.0",
     "@supabase/supabase-js": "^2.93.2",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "astro": "^5.16.16",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.29.2",
+    "lucide-react": "^0.563.0",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@astrojs/vercel": "^9.0.4"

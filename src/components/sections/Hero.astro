@@ -1,0 +1,219 @@
+---
+import { Badge } from "../ui/Badge";
+
+// === CONFIG PRINCIPAL ===
+const courseDateText = "16–17 FEB 2026";
+const courseCity = "Punta Arenas, Chile";
+
+// WhatsApp
+const whatsappHref =
+  "https://wa.me/56937766334?text=Hola%20quiero%20inscribir%20a%20mi%20hijo%20al%20taller%20de%20videojuegos";
+
+const primaryCtaHref = "#register";
+
+// === CUPOS DESDE API ===
+type Spots = { total: number; taken: number; available: number; pct: number };
+
+let spots: Spots = { total: 18, taken: 0, available: 18, pct: 0 };
+
+try {
+  // En server-side, usa URL relativa (Astro la resuelve)
+  const res = await fetch(new URL("/api/spots", Astro.url));
+  if (res.ok) {
+    const json = (await res.json()) as Spots;
+    if (typeof json?.total === "number") spots = json;
+  }
+} catch {
+  // fallback silencioso
+}
+
+const CUPOS_TOTALES = spots.total;
+const cuposDisponibles = spots.available;
+const cuposVendidos = spots.taken;
+
+// Umbrales para UI/Copy
+const ULTIMOS_UMBRAL = 5;
+const ADELANTO_UMBRAL = 6;
+
+// Estado
+const agotado = cuposDisponibles <= 0;
+const ultimos = !agotado && cuposDisponibles <= ULTIMOS_UMBRAL;
+
+// Texto dinámico
+const statusText = agotado
+  ? "CUPOS AGOTADOS"
+  : ultimos
+    ? `SOLO QUEDAN ${cuposDisponibles} CUPOS`
+    : `INSCRIPCIONES ABIERTAS: QUEDAN ${cuposDisponibles}`;
+
+const statusTone = agotado
+  ? "text-red-300 border-red-500/25 bg-red-500/10"
+  : ultimos
+    ? "text-yellow-200 border-yellow-400/25 bg-yellow-400/10"
+    : "text-green-300 border-green-500/25 bg-green-500/10";
+
+const shouldShowAdvanceNote = !agotado && cuposDisponibles <= ADELANTO_UMBRAL;
+
+// Progreso
+const progressPct = Math.max(0, Math.min(100, spots.pct));
+---
+
+<section class="relative" aria-labelledby="hero-title">
+  <div class="min-h-[calc(100svh-56px)] flex items-center">
+    <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+      <div class="lg:col-span-7 space-y-6">
+        <div class="flex flex-wrap items-center gap-3">
+          <Badge color="blue">TALLER DE VERANO 2026</Badge>
+
+          <span class={`inline-flex items-center gap-2 px-3 py-1 rounded-[4px] border text-[11px] font-mono ${statusTone}`}>
+            <span class={agotado ? "text-red-300" : ultimos ? "text-yellow-200" : "text-green-300"}>●</span>
+            {statusText}
+          </span>
+        </div>
+
+        <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.05]">
+          De Jugador a
+          <span class="block">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 text-glow">
+              Desarrollador Web
+            </span><span class="text-white">.</span>
+          </span>
+        </h1>
+
+        <p class="text-jules-secondary text-base sm:text-lg leading-relaxed max-w-xl">
+          Transforma su pasatiempo en una habilidad real. En este taller intensivo, tus hijos dejarán de ser espectadores para crear su propio videojuego profesional usando las mismas herramientas que la industria tecnológica (React & VS Code).
+        </p>
+
+        <div class="max-w-xl">
+          <div class="flex items-center justify-between text-[11px] font-mono text-jules-secondary mb-2">
+            <span>PORCENTAJE DE OCUPACIÓN</span>
+            <span class="text-white/80">{progressPct}%</span>
+          </div>
+
+          <div class="h-2 rounded bg-white/10 border border-white/10 overflow-hidden">
+            <div
+              class={`h-full ${agotado ? "bg-red-400/70" : ultimos ? "bg-yellow-300/70" : "bg-green-400/70"}`}
+              style={`width: ${progressPct}%`}
+            ></div>
+          </div>
+
+          <div class="mt-2 text-[11px] font-mono text-jules-secondary">
+            {agotado ? (
+              <span class="text-red-200/90">Lo sentimos, no quedan cupos. Escríbenos para lista de espera.</span>
+            ) : (
+              <span>
+                ¡Apúrate! {cuposVendidos} de {CUPOS_TOTALES} niños ya están inscritos.
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 sm:items-center relative z-10">
+          <a
+            href={primaryCtaHref}
+            aria-disabled={agotado ? "true" : "false"}
+            class={`inline-flex justify-center items-center px-6 py-3 rounded
+                  font-mono font-bold transition-all focus:outline-none
+                  ${agotado
+                    ? "bg-white/15 text-white/50 border border-white/10 cursor-not-allowed pointer-events-none"
+                    : "bg-white text-black border border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.45)] hover:bg-white/95 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.25),0_18px_40px_rgba(0,0,0,0.55)] focus:ring-2 focus:ring-blue-400/40"
+                  }`}
+          >
+            {agotado ? "CUPOS AGOTADOS" : "QUIERO INSCRIBIR A MI HIJO"}
+          </a>
+
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex justify-center items-center px-6 py-3 rounded
+                   bg-black/50 text-white font-mono font-bold
+                   border border-white/25
+                   shadow-[0_10px_30px_rgba(0,0,0,0.45)]
+                   hover:bg-black/60 hover:border-white/40
+                   transition-all
+                   focus:outline-none focus:ring-2 focus:ring-blue-400/30"
+          >
+            TENGO UNA DUDA
+          </a>
+        </div>
+
+        <div class="inline-flex flex-wrap items-center gap-2 px-4 py-3 rounded border border-jules-border bg-black/25 text-xs sm:text-sm font-mono text-jules-secondary max-w-fit">
+          <span>📅 {courseDateText}</span>
+          <span class="opacity-40">|</span>
+          <span>📍 {courseCity}</span>
+          <span class="opacity-40">|</span>
+          <span class="text-jules-primary">Presencial</span>
+
+          {shouldShowAdvanceNote && (
+            <>
+              <span class="w-full h-px bg-white/10 my-2"></span>
+              <span class="text-jules-accent font-bold">Aviso:</span>
+              <span>
+                Quedan pocos lugares. <span class="text-white font-semibold">Reserva hoy</span> para asegurar la fecha.
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div class="lg:col-span-5">
+        <div class="relative">
+          <div class="absolute -inset-2 bg-gradient-to-r from-blue-500/20 to-purple-600/20 blur-2xl rounded-[12px]"></div>
+
+          <div class="relative jules-panel p-6 md:p-7">
+            <div class="jules-leds">
+              <span class="jules-led led-magenta"></span>
+              <span class="jules-led led-yellow"></span>
+              <span class="jules-led led-cyan"></span>
+            </div>
+
+            <div class="pr-10">
+              <div class="jules-field-label">programa</div>
+              <div class="jules-title text-base mt-1">CREACIÓN DE VIDEOJUEGOS</div>
+              <div class="jules-sub mt-3">
+                No es un juego, es ingeniería inversa. Aprenden lógica, código y despliegue web real.
+              </div>
+            </div>
+
+            <div class="jules-divider my-5"></div>
+
+            <ul class="space-y-3 text-sm font-mono">
+              <li class="flex items-start gap-3 text-white/85">
+                <span class="text-green-400">✓</span>
+                <span><span class="text-white font-semibold">Pensamiento Lógico</span>: Resolverán problemas modificando código real.</span>
+              </li>
+              <li class="flex items-start gap-3 text-white/85">
+                <span class="text-green-400">✓</span>
+                <span><span class="text-white font-semibold">Resultado Tangible</span>: Terminan con su juego publicado en internet (URL).</span>
+              </li>
+              <li class="flex items-start gap-3 text-white/85">
+                <span class="text-green-400">✓</span>
+                <span><span class="text-white font-semibold">Tecnología Real</span>: Usan lo que pide el mercado (VS Code), no juguetes.</span>
+              </li>
+            </ul>
+
+            <div class="mt-6 jules-panel-soft p-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <div class="jules-field-label">inversión</div>
+                  <div class="jules-title text-lg mt-1">$40.000 <span class="text-xs text-jules-secondary font-normal">/ completo</span></div>
+                </div>
+                <div class="sm:text-right">
+                  <div class="jules-field-label">plan amigos/hermanos</div>
+                  <div class="jules-sub mt-1">2do niño: $35.000 · 3ro: $30.000</div>
+                </div>
+              </div>
+            </div>
+
+            {agotado && (
+              <div class="mt-4 p-3 rounded border border-red-500/25 bg-red-500/10 text-[11px] font-mono text-red-200/90">
+                ¡Lo sentimos! Se han acabado los cupos para esta fecha.
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

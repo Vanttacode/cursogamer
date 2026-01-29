@@ -1,0 +1,695 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --jules-bg: #09090b;
+    --jules-panel: #121214;
+    --jules-border: #27272a;
+    --jules-primary: #e4e4e7;
+    --jules-secondary: #a1a1aa;
+    --jules-accent: #3b82f6;
+  }
+
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    background-color: var(--jules-bg);
+    color: var(--jules-primary);
+  }
+
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    background-image:
+      radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%);
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: rgba(18, 18, 20, 0.8);
+    border: 1px solid var(--jules-border);
+    color: #ffffff;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    outline: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--jules-accent);
+    box-shadow: 0 0 0 1px var(--jules-accent), 0 0 15px rgba(59, 130, 246, 0.2);
+  }
+
+  input::placeholder {
+    color: var(--jules-secondary);
+    opacity: 0.7;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    background-color: rgba(18, 18, 20, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .tech-border {
+    position: relative;
+    background-color: rgba(18, 18, 20, 0.6);
+    border: 1px solid var(--jules-border);
+    backdrop-filter: blur(4px);
+  }
+
+  .tech-border::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid var(--jules-accent);
+    border-left: 1px solid var(--jules-accent);
+  }
+
+  .tech-border::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 8px;
+    height: 8px;
+    border-bottom: 1px solid var(--jules-accent);
+    border-right: 1px solid var(--jules-accent);
+  }
+
+  .scanline {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.15;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.2) 50%);
+    background-size: 100% 4px;
+  }
+}
+/* =========================
+   JULES / PIXEL UI CLASSES
+   Pega esto al FINAL de src/styles/global.css
+   ========================= */
+
+@layer components {
+  .jules-surface {
+    position: relative;
+    background:
+      radial-gradient(1200px 600px at 20% 0%, rgba(255, 0, 200, 0.12), transparent 60%),
+      radial-gradient(900px 500px at 80% 20%, rgba(0, 255, 255, 0.10), transparent 55%),
+      radial-gradient(700px 420px at 50% 100%, rgba(255, 230, 0, 0.06), transparent 60%),
+      linear-gradient(180deg, rgba(22, 2, 48, 0.92), rgba(10, 2, 24, 0.92));
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.65),
+      0 0 0 1px rgba(0,0,0,0.9) inset;
+  }
+
+  /* Dotted pixel frame like Jules */
+  .jules-dotframe {
+    position: relative;
+  }
+  .jules-dotframe::before {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    border-radius: 2px;
+    background:
+      radial-gradient(circle, rgba(165, 70, 255, 0.9) 2px, transparent 2.5px) 0 0 / 10px 10px;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    padding: 10px; /* thickness of dotted frame */
+    box-shadow:
+      0 0 0 1px rgba(165,70,255,0.25),
+      0 0 40px rgba(165,70,255,0.20);
+    pointer-events: none;
+  }
+
+  /* inner crisp border */
+  .jules-inner {
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.85) inset,
+      0 12px 30px rgba(0,0,0,0.55);
+  }
+
+  /* pixel-ish header bar */
+  .jules-bar {
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.85) inset;
+  }
+
+  .jules-label {
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 10px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .jules-input {
+    width: 100%;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff;
+    padding: 12px 12px;
+    outline: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    border-radius: 2px;
+    transition: all 180ms ease;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.85) inset;
+  }
+  .jules-input:focus {
+    border-color: rgba(0,255,255,0.55);
+    box-shadow:
+      0 0 0 1px rgba(0,255,255,0.65),
+      0 0 22px rgba(0,255,255,0.18),
+      0 0 0 1px rgba(0,0,0,0.85) inset;
+  }
+  .jules-input::placeholder {
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* Pixel buttons */
+  .jules-btn {
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 12px 14px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.85) inset,
+      0 10px 22px rgba(0,0,0,0.45);
+    transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+  }
+  .jules-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .jules-btn:active { transform: translateY(0px); filter: brightness(0.98); }
+  .jules-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .btn-magenta { background: #ff31c9; color: #130016; border-color: rgba(255,49,201,0.6); }
+  .btn-cyan    { background: #19f2ff; color: #001014; border-color: rgba(25,242,255,0.6); }
+  .btn-yellow  { background: #ffe85a; color: #151200; border-color: rgba(255,232,90,0.6); }
+  .btn-dark    { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+
+  /* Step blocks */
+  .jules-step {
+    height: 8px;
+    width: 44px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.85) inset;
+  }
+  .jules-step.on {
+    background: linear-gradient(90deg, rgba(255,49,201,0.95), rgba(25,242,255,0.85));
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.12) inset,
+      0 0 18px rgba(165,70,255,0.25);
+    border-color: rgba(255,255,255,0.18);
+  }
+
+  /* Dropzone */
+  .jules-drop {
+    border: 1px dashed rgba(255,255,255,0.22);
+    background: rgba(0,0,0,0.25);
+    border-radius: 2px;
+    padding: 14px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.85) inset;
+  }
+
+  /* Small status pill */
+  .jules-pill {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.25);
+    color: rgba(255,255,255,0.75);
+  }
+  .pill-live {
+    border-color: rgba(0,255,140,0.35);
+    color: rgba(0,255,140,0.9);
+    box-shadow: 0 0 14px rgba(0,255,140,0.10);
+  }
+}
+@layer components {
+  /* Wrapper de escena (base) */
+  .jules-scene {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -3;
+    background: #0a0218;
+  }
+
+  /* Glow magenta/cyan/purple (suave, grande) */
+  .jules-scene-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -3;
+    background:
+      radial-gradient(900px 520px at 55% 10%, rgba(255, 49, 201, 0.18), transparent 60%),
+      radial-gradient(900px 600px at 20% 35%, rgba(25, 242, 255, 0.12), transparent 58%),
+      radial-gradient(900px 620px at 80% 90%, rgba(165, 70, 255, 0.16), transparent 60%);
+    filter: blur(0px);
+    opacity: 1;
+  }
+
+  /* Grid muy tenue (tipo product UI) */
+  .jules-scene-grid {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -2;
+    opacity: 0.10;
+    background-image:
+      linear-gradient(to right, rgba(165,70,255,0.45) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(165,70,255,0.45) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  /* Viñeta (borde oscuro) */
+  .jules-scene-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background: radial-gradient(1200px 700px at 50% 22%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.86) 92%);
+  }
+
+  /* Banda diagonal pixel (como la franja de tus screenshots) */
+  .jules-scene-diagonal {
+    position: fixed;
+    left: -10%;
+    top: 38%;
+    width: 120%;
+    height: 80px;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.55;
+    background:
+      linear-gradient(90deg,
+        rgba(255,255,255,0.00) 0%,
+        rgba(255,255,255,0.06) 20%,
+        rgba(255,255,255,0.00) 55%,
+        rgba(255,255,255,0.04) 85%,
+        rgba(255,255,255,0.00) 100%
+      );
+    transform: rotate(-8deg);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  }
+
+  /* Dientes/píxeles dentro de la banda (chunky) */
+  .jules-scene-diagonal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        rgba(165,70,255,0.0) 0px,
+        rgba(165,70,255,0.0) 12px,
+        rgba(165,70,255,0.22) 12px,
+        rgba(165,70,255,0.22) 20px
+      );
+    opacity: 0.9;
+  }
+
+  /* Pixel Islands: patrón SVG (cuadritos dispersos) */
+  .jules-scene-islands {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.85;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' fill='none'/%3E%3Cg opacity='0.9'%3E%3C!-- top-right cluster --%3E%3Cg transform='translate(360,20)'%3E%3Crect x='0' y='0' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='12' y='0' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='24' y='0' width='10' height='10' fill='%2319f2ff'/%3E%3Crect x='12' y='12' width='10' height='10' fill='%23ff31c9'/%3E%3Crect x='24' y='12' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='36' y='12' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='0' y='24' width='10' height='10' fill='%2319f2ff'/%3E%3Crect x='12' y='24' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='24' y='24' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='36' y='24' width='10' height='10' fill='%23ff31c9'/%3E%3C/g%3E%3C!-- bottom-left diagonal island field --%3E%3Cg transform='translate(40,360)' opacity='0.75'%3E%3Crect x='0' y='96' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='12' y='84' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='24' y='72' width='10' height='10' fill='%2319f2ff'/%3E%3Crect x='36' y='60' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='48' y='48' width='10' height='10' fill='%23ff31c9'/%3E%3Crect x='60' y='36' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='72' y='24' width='10' height='10' fill='%2319f2ff'/%3E%3Crect x='84' y='12' width='10' height='10' fill='%23a546ff'/%3E%3Crect x='96' y='0' width='10' height='10' fill='%23a546ff'/%3E%3C/g%3E%3C!-- sparse dots mid --%3E%3Cg opacity='0.35'%3E%3Crect x='120' y='160' width='6' height='6' fill='%23a546ff'/%3E%3Crect x='180' y='210' width='6' height='6' fill='%2319f2ff'/%3E%3Crect x='260' y='190' width='6' height='6' fill='%23ff31c9'/%3E%3Crect x='310' y='260' width='6' height='6' fill='%23a546ff'/%3E%3Crect x='220' y='310' width='6' height='6' fill='%2319f2ff'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 520px 520px;
+    mix-blend-mode: screen;
+  }
+
+  /* “Isla” grande en esquina inferior derecha (más densa) */
+  .jules-scene-corner {
+    position: fixed;
+    right: -20px;
+    bottom: -20px;
+    width: 520px;
+    height: 320px;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.75;
+    background-image:
+      radial-gradient(circle, rgba(165,70,255,0.85) 2px, transparent 2.6px);
+    background-size: 10px 10px;
+    mask-image: radial-gradient(420px 240px at 70% 70%, #000 35%, transparent 75%);
+    -webkit-mask-image: radial-gradient(420px 240px at 70% 70%, #000 35%, transparent 75%);
+    filter: drop-shadow(0 0 20px rgba(165,70,255,0.20));
+  }
+}
+@layer components {
+  .jules-panel {
+    background: rgba(11, 3, 28, 0.72);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow:
+      0 18px 50px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(0,0,0,0.80) inset;
+    border-radius: 4px;
+    position: relative;
+  }
+
+  .jules-panel-soft {
+    background: rgba(8, 2, 22, 0.55);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.85) inset;
+    border-radius: 4px;
+  }
+
+  .jules-leds {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+  }
+  .jules-led {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.55) inset;
+  }
+  .led-magenta { background: #ff31c9; }
+  .led-yellow  { background: #ffe85a; }
+  .led-cyan    { background: #19f2ff; }
+
+  .jules-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .jules-chip {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.70);
+  }
+
+  .jules-title {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.92);
+  }
+
+  .jules-sub {
+    font-family: "JetBrains Mono", monospace;
+    color: rgba(255,255,255,0.65);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .jules-field-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+
+  .jules-input2 {
+    width: 100%;
+    background: rgba(0,0,0,0.30);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.90);
+    padding: 12px 12px;
+    outline: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all 160ms ease;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.85) inset;
+  }
+  .jules-input2:focus {
+    border-color: rgba(25,242,255,0.45);
+    box-shadow:
+      0 0 0 1px rgba(25,242,255,0.40),
+      0 0 18px rgba(25,242,255,0.10),
+      0 0 0 1px rgba(0,0,0,0.85) inset;
+  }
+  .jules-input2::placeholder {
+    color: rgba(255,255,255,0.30);
+  }
+
+  .jules-btn2 {
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.88);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.85) inset,
+      0 14px 28px rgba(0,0,0,0.35);
+    transition: transform 120ms ease, filter 120ms ease, background 120ms ease;
+  }
+  .jules-btn2:hover { transform: translateY(-1px); filter: brightness(1.03); }
+  .jules-btn2:active { transform: translateY(0px); filter: brightness(0.98); }
+  .jules-btn2:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .btn2-primary {
+    background: linear-gradient(90deg, rgba(255,49,201,0.95), rgba(25,242,255,0.85));
+    color: rgba(10,2,24,0.95);
+    border-color: rgba(255,255,255,0.14);
+  }
+  .btn2-quiet {
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.75);
+  }
+
+  .jules-step2 {
+    height: 4px;
+    width: 42px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .jules-step2.on {
+    background: rgba(25,242,255,0.55);
+    border-color: rgba(25,242,255,0.35);
+    box-shadow: 0 0 14px rgba(25,242,255,0.12);
+  }
+
+  .jules-drop2 {
+    border: 1px dashed rgba(255,255,255,0.18);
+    background: rgba(0,0,0,0.22);
+    border-radius: 4px;
+    padding: 14px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.85) inset;
+  }
+
+  .jules-kv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+}
+/* === Jules-ish Widgets (pixel/arcade) === */
+.jx-frame {
+  position: relative;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(10, 6, 28, 0.55);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+  overflow: hidden;
+}
+
+.jx-frame::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px);
+  background-size: 6px 6px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+
+.jx-surface {
+  position: relative;
+  border-radius: 12px;
+  background: rgba(16, 10, 40, 0.72);
+  border: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.jx-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 49, 201, 0.18), transparent 40%),
+    radial-gradient(circle at 85% 35%, rgba(0, 255, 255, 0.12), transparent 45%),
+    radial-gradient(circle at 55% 90%, rgba(59, 130, 246, 0.10), transparent 50%);
+}
+
+.jx-leds {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+.jx-led { width: 8px; height: 8px; border-radius: 2px; opacity: 0.9; }
+.jx-led.m { background: rgba(255,49,201,0.95); }
+.jx-led.y { background: rgba(255,214,74,0.95); }
+.jx-led.c { background: rgba(54,255,255,0.95); }
+
+.jx-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.60);
+}
+
+.jx-title {
+  font-family: "JetBrains Mono", monospace;
+  color: rgba(255,255,255,0.92);
+}
+
+.jx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.25);
+}
+
+.jx-dot { width: 10px; height: 10px; border-radius: 2px; background: rgba(54,255,255,0.95); }
+
+.jx-input {
+  width: 100%;
+  background: rgba(0,0,0,0.30);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.92);
+  border-radius: 10px;
+  padding: 12px 12px;
+  outline: none;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+  transition: all .18s ease;
+}
+.jx-input:focus {
+  border-color: rgba(54,255,255,0.55);
+  box-shadow: 0 0 0 1px rgba(54,255,255,0.35), 0 0 18px rgba(54,255,255,0.18);
+}
+.jx-input::placeholder { color: rgba(255,255,255,0.35); }
+
+.jx-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.25);
+  color: rgba(255,255,255,0.92);
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  transition: all .18s ease;
+}
+.jx-btn:hover { border-color: rgba(255,255,255,0.26); background: rgba(0,0,0,0.35); }
+.jx-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.jx-btnPrimary {
+  background: rgba(54,255,255,0.14);
+  border-color: rgba(54,255,255,0.30);
+}
+.jx-btnPrimary:hover { background: rgba(54,255,255,0.18); }
+
+.jx-btnWhite {
+  background: rgba(255,255,255,0.92);
+  color: rgba(0,0,0,0.9);
+  border-color: rgba(255,255,255,0.35);
+}
+.jx-btnWhite:hover { background: rgba(255,255,255,0.97); }
+
+.jx-card {
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.22);
+}
+
+.jx-sep { height: 1px; background: rgba(255,255,255,0.10); margin: 14px 0; }
+
+.jx-drop {
+  border: 1px dashed rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.18);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.jx-kbd {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.20);
+  color: rgba(255,255,255,0.85);
+}
+
+@media (min-width: 1024px) {
+  .jx-sticky { position: sticky; top: 96px; }
+}

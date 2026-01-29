@@ -1,174 +1,25 @@
 ---
-import "../styles/theme.css";
-import "../styles/retro.css";
-import ReservationWidget from "../components/ReservationWidget";
-import GameDemoShowroom from "../components/GameDemoShowroom";
-import BuildBlocks from "../components/BuildBlocks";
-import SpotsBig from "../components/SpotsBig";
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import Hero from "../components/sections/Hero.astro";
+import CourseArchitecture from "../components/sections/CourseArchitecture.astro";
+import RegisterSection from "../components/sections/RegisterSection.astro";
+
+const PACMAN_FAVICON =
+  'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👾</text></svg>';
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Taller de Verano: Tu Propio Videojuego Web | Punta Arenas</title>
-    <meta name="description" content="Taller intensivo (10 a 16 años): crean un videojuego web real con React y lo publican con una URL para compartir. Cupos limitados." />
-  </head>
+<Layout title="Taller Videojuegos | Punta Arenas">
+  <link rel="icon" href={PACMAN_FAVICON} />
 
-  <body>
-    <div class="retroBg">
-      <div class="retroGrid"></div>
-      <div class="floatGlow"></div>
-      <div class="scanlines"></div>
-    </div>
+  <Header />
 
-    <div class="pageLayer">
-      <header class="container" style="padding:16px 16px 8px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-          <div class="badge">
-            <span class="mono" style="color:var(--neon-blue)">DEV MODE</span>
-            <span>•</span>
-            <span>Punta Arenas, Chile</span>
-          </div>
+  <main class="pt-24 pb-20 px-4 max-w-5xl mx-auto space-y-24">
+    <Hero />
+    <CourseArchitecture />
+    <RegisterSection />
+  </main>
 
-          <a href="#reservar" class="btn">Reservar</a>
-        </div>
-      </header>
-
-      <main class="container">
-        <section class="section heroGrid">
-          <div class="card">
-            <div class="inner">
-              <div class="badge">
-                <span style="color:var(--neon-green)">16–17 Feb 2026</span>
-                <span>•</span>
-                <span>2 sesiones de 80 min</span>
-                <span>•</span>
-                <span>10 a 16 años</span>
-              </div>
-
-              <h1 class="h1">
-                Tu hijo entra como <span style="color:var(--neon-blue)">jugador</span>.
-                Sale como <span style="color:var(--neon-purple)">creador</span> con su videojuego en internet.
-              </h1>
-
-              <p class="p" style="max-width:60ch;">
-                Taller intensivo donde construyen un videojuego web real usando herramientas profesionales
-                <span class="kbd">VS Code</span> <span class="kbd">React</span> <span class="kbd">GitHub</span>,
-                explicado de forma clara y sin infantilizar.
-              </p>
-
-              <hr class="sep" />
-
-              <div class="threeCol" style="gap:12px;">
-                <div class="card" style="background:rgba(10,15,28,.55); border-color:rgba(46,233,255,.22);">
-                  <div class="inner">
-                    <b>Resultado real</b>
-                    <div class="small" style="margin-top:6px;">Juego publicado + <b>URL</b> para compartir.</div>
-                  </div>
-                </div>
-                <div class="card" style="background:rgba(10,15,28,.55); border-color:rgba(54,255,141,.20);">
-                  <div class="inner">
-                    <b>Proyecto + Código</b>
-                    <div class="small" style="margin-top:6px;"><b>Editable</b> para seguir mejorándolo en casa.</div>
-                  </div>
-                </div>
-                <div class="card" style="background:rgba(10,15,28,.55); border-color:rgba(180,108,255,.20);">
-                  <div class="inner">
-                    <b>Certificado digital</b>
-                    <div class="small" style="margin-top:6px;">Certificado como <b>Programador/a</b>.</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="btnRow" style="margin-top:14px;">
-                <a href="#reservar" class="btn btnPrimary">Reservar Cupo</a>
-                <a href="#que-haran" class="btn">Ver qué construirán</a>
-              </div>
-
-              <div class="small" style="margin-top:10px;">
-                Requisito excluyente: traer notebook propio. • Si el cupo se completa muy anticipadamente, se adelantan fechas.
-              </div>
-            </div>
-          </div>
-
-          <div class="grid" style="gap:14px;">
-            <div class="card">
-              <div class="inner">
-                <div class="badge">
-                  <span style="color:var(--neon-green)">CUPOS</span>
-                  <span>•</span>
-                  <span>Cupos limitados</span>
-                </div>
-                <div style="margin-top:10px;">
-                  <SpotsBig client:load />
-                </div>
-                <hr class="sep" />
-                <div class="small" style="line-height:1.8;">
-                  <div><b>Precio:</b> $40.000 CLP</div>
-                  <div>2 niños: $80.000 • 3 niños: $100.000</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="inner">
-                <GameDemoShowroom client:load />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="que-haran" class="section">
-          <div class="card">
-            <div class="inner">
-              <div class="badge">
-                <span style="color:var(--neon-blue)">EN 2 DÍAS</span>
-                <span>•</span>
-                <span class="mono">Qué van a construir</span>
-              </div>
-              <h2 class="h2" style="margin-top:10px;">
-                Un videojuego web completo: diseño, lógica, publicación y link para compartir.
-              </h2>
-              <p class="p">
-                No es “ver teoría”. Es salir con una entrega real: <b>juego + código + página pública</b>.
-              </p>
-
-              <div style="margin-top:14px;">
-                <BuildBlocks client:load />
-              </div>
-
-              <div class="small" style="margin-top:12px;">
-                Incluye: proyecto listo para modificar + guía de próximos pasos + certificado digital.
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="reservar" class="section">
-          <div class="card">
-            <div class="inner">
-              <div class="badge">
-                <span style="color:var(--neon-blue)">RESERVA</span>
-                <span>•</span>
-                <span class="mono">Cupo confirmado con comprobante</span>
-              </div>
-              <h2 class="h2" style="margin-top:10px;">Reserva tu cupo</h2>
-              <p class="p">
-                Paso 1: datos • Paso 2: transferencia + comprobante (foto o PDF). Ahí se confirma el cupo.
-              </p>
-
-              <div style="margin-top:14px;">
-                <ReservationWidget client:load />
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer class="container" style="padding:0 16px 40px; color:var(--muted);">
-        <div class="small">© 2026 • Taller Videojuego Web • Punta Arenas</div>
-      </footer>
-    </div>
-  </body>
-</html>
+  <Footer />
+</Layout>
