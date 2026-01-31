@@ -1,0 +1,21 @@
+# Vantta Academy (academy.vanttacode.cl)
+
+## Propósito
+Landing page para inscripciones al Taller de Programación de Videojuegos para niños en Punta Arenas, Magallanes, Chile.
+
+## Audiencia
+Padres y apoderados que buscan cursos presenciales de programación infantil, talleres de videojuegos y clases de computación en Punta Arenas.
+
+## Servicios principales
+- Taller de Programación de Videojuegos (verano 2026)
+- Curso presencial en Punta Arenas
+- Desarrollo web con React para niños
+
+## Información clave
+- Modalidad: Presencial
+- Ciudad: Punta Arenas, Magallanes, Chile
+- Inscripción: https://academy.vanttacode.cl/#register
+- Contacto: WhatsApp disponible en la página
+
+## Páginas relevantes
+- https://academy.vanttacode.cl/

@@ -8,17 +8,33 @@ interface Props {
 }
 
 const {
-  title,
-  description = "Taller intensivo de programación de videojuegos web para niños y adolescentes en Punta Arenas. De jugador a creador.",
+  title = "Taller de Programación de Videojuegos para Niños en Punta Arenas | Vantta Academy",
+  description = "Curso de verano 2026 en Punta Arenas. Tu hijo aprenderá lógica de programación y React creando su propio videojuego. Clases presenciales. ¡Cupos limitados!",
 } = Astro.props;
+
 ---
 
 <!doctype html>
 <html lang="es" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
+    <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content="curso programación niños punta arenas, taller videojuegos magallanes, clases computación niños, verano 2026 punta arenas, vantta academy" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Nicolás Vera - Vantta Code" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://academy.vanttacode.cl/" />
+    <meta property="og:title" content="Taller de Programación de Videojuegos para Niños en Punta Arenas" />
+    <meta property="og:description" content="Transforma el tiempo de pantalla en aprendizaje. Taller presencial de desarrollo web y videojuegos en Punta Arenas." />
+    <meta property="og:image" content="https://academy.vanttacode.cl/og-image.jpg" />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://academy.vanttacode.cl/" />
+    <meta property="twitter:title" content="Taller de Programación de Videojuegos para Niños en Punta Arenas" />
+    <meta property="twitter:description" content="Transforma el tiempo de pantalla en aprendizaje. Taller presencial de desarrollo web y videojuegos en Punta Arenas." />
+    <meta property="twitter:image" content="https://academy.vanttacode.cl/og-image.jpg" />
     <meta name="viewport" content="width=device-width" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 
@@ -28,8 +44,50 @@ const {
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-
-    <title>{title}</title>
+    <script
+      type="application/ld+json"
+      set:html={`{
+  "@context": "https://schema.org",
+  "@type": "EducationEvent",
+  "name": "Taller de Creación de Videojuegos para Niños",
+  "description": "Taller intensivo donde los niños aprenden a programar su propio videojuego usando React y herramientas profesionales.",
+  "startDate": "2026-02-16T09:00",
+  "endDate": "2026-02-17T18:00",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "location": {
+    "@type": "Place",
+    "name": "Sede Vantta Academy (Por Confirmar)",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Punta Arenas",
+      "addressRegion": "Magallanes",
+      "addressCountry": "CL"
+    }
+  },
+  "image": [
+    "https://academy.vanttacode.cl/images/taller-videojuegos-cover.jpg"
+  ],
+  "organizer": {
+    "@type": "Organization",
+    "name": "Vantta Academy",
+    "url": "https://academy.vanttacode.cl"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "https://academy.vanttacode.cl/#register",
+    "price": "40000",
+    "priceCurrency": "CLP",
+    "availability": "https://schema.org/InStock",
+    "validFrom": "2026-01-31T00:00"
+  },
+  "performer": {
+    "@type": "Person",
+    "name": "Nicolás Vera",
+    "jobTitle": "Full Stack Developer"
+  }
+}`}
+    ></script>
   </head>
 
   <body class="bg-jules-bg text-jules-primary antialiased selection:bg-jules-accent selection:text-white overflow-x-hidden min-h-screen relative">

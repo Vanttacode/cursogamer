@@ -105,7 +105,7 @@ export default function BuildBlocks() {
           className="mb-10"
         >
           <h2 id="build-title" className="text-3xl md:text-4xl font-bold text-white tracking-tight">
-            Mucho más que "jugar a la computadora"
+            ¿Por qué elegir nuestro curso de programación infantil?
           </h2>
           <p className="mt-3 text-jules-secondary text-base md:text-lg max-w-3xl">
             Este taller transforma el tiempo de pantalla en tiempo productivo.
