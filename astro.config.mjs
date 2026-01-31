@@ -4,6 +4,7 @@ import vercel from "@astrojs/vercel/serverless";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  site: "https://academy.vanttacode.cl",
   integrations: [react()],
   output: "server",
   adapter: vercel(),

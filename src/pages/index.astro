@@ -4,13 +4,50 @@ import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import Hero from "../components/sections/Hero.astro";
 import CourseArchitecture from "../components/sections/CourseArchitecture.astro";
+import FAQSection from "../components/sections/FAQSection.astro";
 import RegisterSection from "../components/sections/RegisterSection.astro";
 
 const PACMAN_FAVICON =
   'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👾</text></svg>';
 ---
 
-<Layout title="Taller Videojuegos | Punta Arenas">
+<Layout
+  title="Taller de Programación de Videojuegos para Niños en Punta Arenas | Vantta Academy"
+  description="Curso de verano 2026 en Punta Arenas. Tu hijo aprenderá lógica de programación y React creando su propio videojuego. Clases presenciales. ¡Cupos limitados!"
+>
+  <script
+    type="application/ld+json"
+    set:html={`{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Dónde se realizan las clases en Punta Arenas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El taller se realiza en Punta Arenas, Magallanes. La dirección exacta se confirma por WhatsApp al momento de la inscripción."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Es necesario llevar computador al taller en Magallanes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí, cada estudiante debe llevar su computador portátil para practicar en clase. Si necesitas apoyo con este punto en Punta Arenas, escríbenos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Para qué edades es el curso de programación infantil?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El taller está diseñado para niños y adolescentes que viven en Punta Arenas y quieren aprender programación creativa desde cero."
+      }
+    }
+  ]
+}`}
+  ></script>
   <link rel="icon" href={PACMAN_FAVICON} />
 
   <Header />
@@ -18,6 +55,7 @@ const PACMAN_FAVICON =
   <main class="pt-24 pb-20 px-4 max-w-5xl mx-auto space-y-24">
     <Hero />
     <CourseArchitecture />
+    <FAQSection />
     <RegisterSection />
   </main>
 
